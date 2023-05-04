@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MvcCars.Data;
@@ -7,6 +8,9 @@ using MvcCars.Services;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<CarContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("CarContext") ?? throw new InvalidOperationException("Connection string 'CarContext' not found.")));
+
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+    .AddEntityFrameworkStores<CarContext>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

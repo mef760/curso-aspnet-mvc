@@ -4,10 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MvcCars.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace MvcCars.Data
 {
-    public class CarContext : DbContext
+    public class CarContext : IdentityDbContext
     {
         public CarContext (DbContextOptions<CarContext> options)
             : base(options)
