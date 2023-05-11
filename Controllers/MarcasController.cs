@@ -13,9 +13,9 @@ namespace MvcCars.Controllers
 {
     public class MarcasController : Controller
     {
-        private readonly CarService<Marca> _marcaService;
+        private readonly IMarcaService _marcaService;
 
-        public MarcasController(CarService<Marca> marcaService)
+        public MarcasController(IMarcaService marcaService)
         {
             _marcaService = marcaService;
         }

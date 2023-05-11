@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,14 +12,15 @@ using MvcCars.Services;
 
 namespace MvcCars.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CarsController : Controller
     {
-        private readonly CarService<Car> _carService;
-        private readonly CarService<Marca> _marcaService;
+        private readonly ICarService _carService;
+        private readonly IMarcaService _marcaService;
 
         public CarsController(
-            CarService<Car> carService,
-            CarService<Marca> marcaService)
+            ICarService carService,
+            IMarcaService marcaService)
         {
             _carService = carService;
             _marcaService = marcaService;
@@ -27,7 +29,7 @@ namespace MvcCars.Controllers
         // GET: Cars
         public async Task<IActionResult> Index()
         {
-            return View(_carService.GetAll());
+            return View(_carService.GetAllCars());
         }
 
         // GET: Cars/Details/5
@@ -38,7 +40,7 @@ namespace MvcCars.Controllers
                 return NotFound();
             }
 
-            var car = _carService.GetById(id);
+            var car = _carService.GetCarById(id);
             if (car == null)
             {
                 return NotFound();
@@ -63,9 +65,10 @@ namespace MvcCars.Controllers
         {
             // TODO: implementar viewmodel
             ModelState.Remove("Marca");
+            ModelState.Remove("Accesories");
             if (ModelState.IsValid)
             {
-                _carService.Create(car);
+                _carService.CreateCar(car);
                 return RedirectToAction(nameof(Index));
             }
             ViewData["MarcaId"] = new SelectList(_marcaService.GetAll(), "Id", "Name", car.MarcaId);
@@ -80,7 +83,7 @@ namespace MvcCars.Controllers
                 return NotFound();
             }
 
-            var car = _carService.GetById(id);
+            var car = _carService.GetCarById(id);
             if (car == null)
             {
                 return NotFound();
@@ -105,7 +108,7 @@ namespace MvcCars.Controllers
             {
                 try
                 {
-                    _carService.Update(car);
+                    _carService.UpdateCar(car);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -132,7 +135,7 @@ namespace MvcCars.Controllers
                 return NotFound();
             }
 
-            var car = _carService.GetById(id);
+            var car = _carService.GetCarById(id);
             if (car == null)
             {
                 return NotFound();
@@ -146,10 +149,10 @@ namespace MvcCars.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var car = _carService.GetById(id);
+            var car = _carService.GetCarById(id);
             if (car != null)
             {
-                _carService.Delete(car);
+                _carService.DeleteCar(car);
             }
 
             return RedirectToAction(nameof(Index));
@@ -157,7 +160,7 @@ namespace MvcCars.Controllers
 
         private bool CarExists(int id)
         {
-          return (_carService.GetById(id) != null);
+          return (_carService.GetCarById(id) != null);
         }
     }
 }

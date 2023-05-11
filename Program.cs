@@ -15,8 +15,9 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<CarService<Car>>();
-builder.Services.AddScoped<CarService<Marca>>();
+
+builder.Services.AddScoped<ICarService, CarService>();
+builder.Services.AddScoped<IMarcaService, MarcaService>();
 
 var app = builder.Build();
 

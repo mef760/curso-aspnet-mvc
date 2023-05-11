@@ -1,4 +1,4 @@
-@model IEnumerable<MvcCars.Models.Car>
+@model IEnumerable<CarViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -16,7 +16,7 @@
                 @Html.DisplayNameFor(model => model.Modelo)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Type)
+                @Html.DisplayNameFor(model => model.CarType)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Dominio)
@@ -37,7 +37,7 @@
                 @Html.DisplayFor(modelItem => item.Modelo)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Type)
+                @Html.DisplayFor(modelItem => item.CarType)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Dominio)
@@ -46,7 +46,7 @@
                 @Html.DisplayFor(modelItem => item.Color)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Marca.Id)
+                @Html.DisplayFor(modelItem => item.Marca)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

@@ -1,45 +1,62 @@
+using Microsoft.EntityFrameworkCore;
 using MvcCars.Data;
+using MvcCars.Models;
 
 namespace MvcCars.Services;
 
-public class CarService<T> where T: class
+public class CarService: Repository<Car>, ICarService 
 {
-    private readonly CarContext _context;
-
-    public CarService(CarContext context)
+    public CarService(CarContext context): base(context)
     {
-        _context = context;
+        
     }
 
-    public void Create(T entity)
+    public void CreateCar(Car entity)
     {
-        _context.Set<T>().Add(entity);
-        _context.SaveChanges();
-    }
-
-    public void Update(T entity)
-    {
-        _context.Set<T>().Update(entity);
-        _context.SaveChanges();
-    }
-
-    public void Delete(T entity)
-    {
-        _context.Set<T>().Remove(entity);
-        _context.SaveChanges();
-    }
-
-    public T? GetById(int? id)
-    {
-        if (id == null)
-        {
-            return null;
+        // logica verificar nombres repetidos
+        var response = base.GetWithFilter(x => x.Modelo == entity.Modelo);
+        
+        if (response != null && response.Count() > 0){
+            // no crea
+            return;
         }
-        return _context.Set<T>().Find(id);
+        // crear con el repositorio
+        base.Create(entity);
     }
 
-    public IEnumerable<T> GetAll()
+    public void DeleteCar(Car entity)
     {
-        return _context.Set<T>().ToList();
+        base.Delete(entity);
+    }
+
+    public IEnumerable<CarViewModel> GetAllCars()
+    {
+        var list = base.GetAll().Include(x => x.Marca).ToList();
+        var listViewModel = new List<CarViewModel>();
+
+        foreach (var item in list)
+        {
+            var obj = new CarViewModel{
+                Modelo = item.Modelo,
+                Marca = item.Marca != null ? item.Marca.Name : string.Empty,
+                MarcaId = item.MarcaId,
+                Dominio = item.Dominio,
+                Color = item.Color,
+                CarType = item.Type.ToString()
+            };
+            listViewModel.Add(obj);
+        }
+
+        return listViewModel;
+    }
+
+    public Car? GetCarById(int? id)
+    {
+        return base.GetById(id);
+    }
+
+    public void UpdateCar(Car entity)
+    {
+        base.Update(entity);
     }
 }
